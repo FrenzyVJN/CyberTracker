@@ -126,6 +126,13 @@ export default function TaskManager() {
             onDelete={deleteTask}
           />
         </TabsContent>
+        <TabsContent value="exams">
+          <TaskList
+            tasks={tasks.filter((task) => task.category === "exams")}
+            onToggleComplete={toggleTaskCompletion}
+            onDelete={deleteTask}
+          />
+        </TabsContent>
       </Tabs>
 
       <AddTaskDialog open={open} setOpen={setOpen} onAddTask={addTask} />
