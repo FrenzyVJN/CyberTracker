@@ -97,17 +97,17 @@ export default function TaskManager() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Class Task Manager</h1>
-        <Button onClick={() => setOpen(true)} className="gap-2">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Class Task Manager</h1>
+        <Button onClick={() => setOpen(true)} className="gap-2 w-full sm:w-auto">
           <PlusCircle className="h-4 w-4" />
           Add Task
         </Button>
       </div>
 
       <Tabs defaultValue="core" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="core">Core Subjects</TabsTrigger>
           <TabsTrigger value="hackathons">Hackathons</TabsTrigger>
           <TabsTrigger value="ctfs">CTFs</TabsTrigger>

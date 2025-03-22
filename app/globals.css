@@ -88,3 +88,24 @@
   box-shadow: 0 0 15px 2px hsl(var(--success) / 0.3);
 }
 
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Reduce spacing on mobile */
+  .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+  }
+
+  /* Adjust dialog for mobile */
+  .dialog-content {
+    width: calc(100% - 2rem);
+    padding: 1rem;
+  }
+}
+

@@ -72,8 +72,8 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
           )}
         />
 
-        <CardContent className="p-4 relative z-10">
-          <div className="flex items-start gap-3">
+        <CardContent className="p-3 sm:p-4 relative z-10">
+          <div className="flex items-start gap-2 sm:gap-3">
             <motion.div whileTap={{ scale: 0.9 }}>
               <Checkbox
                 checked={task.completed}
@@ -81,31 +81,33 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
                 className={cn("mt-1 transition-all duration-300", task.completed ? "bg-primary border-primary" : "")}
               />
             </motion.div>
-            <div className="flex-1">
-              <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                 <h3
                   className={cn(
-                    "text-lg font-medium transition-all duration-300",
+                    "text-base sm:text-lg font-medium transition-all duration-300 line-clamp-1",
                     task.completed ? "line-through text-muted-foreground" : "",
                   )}
                 >
                   {task.title}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge
                     variant="outline"
                     className={cn(
                       priorityColors[task.priority as keyof typeof priorityColors],
-                      "transition-all duration-300",
+                      "transition-all duration-300 text-xs",
                     )}
                   >
                     {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                   </Badge>
-                  <Badge variant="secondary">{categoryLabels[task.category as keyof typeof categoryLabels]}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {categoryLabels[task.category as keyof typeof categoryLabels]}
+                  </Badge>
                 </div>
               </div>
 
-              <div className="mt-1 flex items-center text-sm text-muted-foreground">
+              <div className="mt-1 flex items-center text-xs sm:text-sm text-muted-foreground">
                 <Calendar className="mr-1 h-3 w-3" />
                 <span className={cn(isOverdue ? "text-destructive font-medium" : "")}>
                   {format(dueDate, "MMM d, yyyy")}
@@ -118,7 +120,7 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-3 text-sm"
+                  className="mt-3 text-xs sm:text-sm"
                 >
                   <p>{task.description}</p>
                 </motion.div>
@@ -127,14 +129,14 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between p-2 pt-0 relative z-10">
-          <Button variant="ghost" size="sm" onClick={() => setExpanded(!expanded)} className="text-xs">
+          <Button variant="ghost" size="sm" onClick={() => setExpanded(!expanded)} className="text-xs px-2 h-8">
             {expanded ? (
               <>
-                <ChevronUp className="mr-1 h-3 w-3" /> Hide Details
+                <ChevronUp className="mr-1 h-3 w-3" /> Hide
               </>
             ) : (
               <>
-                <ChevronDown className="mr-1 h-3 w-3" /> Show Details
+                <ChevronDown className="mr-1 h-3 w-3" /> Details
               </>
             )}
           </Button>
@@ -143,7 +145,7 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
               variant="ghost"
               size="sm"
               onClick={handleDelete}
-              className="text-destructive text-xs hover:bg-destructive/10 hover:text-destructive"
+              className="text-destructive text-xs px-2 h-8 hover:bg-destructive/10 hover:text-destructive"
             >
               <Trash2 className="mr-1 h-3 w-3" /> Delete
             </Button>

@@ -65,7 +65,7 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] w-[calc(100%-32px)] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
         </DialogHeader>
@@ -100,7 +100,7 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
             />
           </motion.div>
 
-          <motion.div className="grid grid-cols-2 gap-4" variants={itemVariants}>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-4" variants={itemVariants}>
             <div className="space-y-2">
               <Label htmlFor="dueDate">Due Date</Label>
               <Input
@@ -131,7 +131,7 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
 
           <motion.div className="space-y-2" variants={itemVariants}>
             <Label>Priority</Label>
-            <RadioGroup value={priority} onValueChange={setPriority} className="flex space-x-4">
+            <RadioGroup value={priority} onValueChange={setPriority} className="flex flex-wrap gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="high" id="high" />
                 <Label htmlFor="high" className="text-destructive font-medium">

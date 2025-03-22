@@ -17,10 +17,10 @@ export function TaskList({ tasks, onToggleComplete, onDelete }: TaskListProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="mt-16 flex flex-col items-center justify-center rounded-lg border border-dashed border-border p-8 text-center"
+        className="mt-8 sm:mt-16 flex flex-col items-center justify-center rounded-lg border border-dashed border-border p-4 sm:p-8 text-center"
       >
-        <h3 className="mb-2 text-xl font-medium">No tasks yet</h3>
-        <p className="text-muted-foreground">Add a new task to get started.</p>
+        <h3 className="mb-2 text-lg sm:text-xl font-medium">No tasks yet</h3>
+        <p className="text-sm text-muted-foreground">Add a new task to get started.</p>
       </motion.div>
     )
   }
@@ -48,7 +48,7 @@ export function TaskList({ tasks, onToggleComplete, onDelete }: TaskListProps) {
 
   return (
     <motion.div
-      className="mt-6 space-y-4"
+      className="mt-4 sm:mt-6 space-y-3 sm:space-y-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
