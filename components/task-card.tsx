@@ -31,7 +31,7 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
     core: "Core Subject",
     hackathons: "Hackathon",
     ctfs: "CTF",
-    projects: "Project",
+    projects: "NPTEL",
   }
   console.log(task.dueDate)
   const dueDate = task.dueDate // Due date in local time

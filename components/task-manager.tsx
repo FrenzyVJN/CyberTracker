@@ -95,7 +95,7 @@ export default function TaskManager() {
           <TabsTrigger value="core">Core Subjects</TabsTrigger>
           <TabsTrigger value="hackathons">Hackathons</TabsTrigger>
           <TabsTrigger value="ctfs">CTFs</TabsTrigger>
-          <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsTrigger value="projects">NPTEL</TabsTrigger>
         </TabsList>
         <TabsContent value="core">
           <TaskList
