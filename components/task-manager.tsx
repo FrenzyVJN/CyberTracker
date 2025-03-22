@@ -91,7 +91,7 @@ export default function TaskManager() {
       </div>
 
       <Tabs defaultValue="core" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
           <TabsTrigger value="core">Core Subjects</TabsTrigger>
           <TabsTrigger value="hackathons">Hackathons</TabsTrigger>
           <TabsTrigger value="ctfs">CTFs</TabsTrigger>
