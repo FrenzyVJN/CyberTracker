@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import type { Task } from "@/lib/types"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -11,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { format } from "date-fns"
 import { motion } from "framer-motion"
+import { createPocketBase } from "@/lib/pb"
 
 interface AddTaskDialogProps {
   open: boolean
@@ -23,19 +22,36 @@ interface AddTaskDialogProps {
 export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [dueDate, setDueDate] = useState(format(new Date(), "yyyy-MM-dd"))
+  const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0])  // Default to current date in yyyy-mm-dd format
+  const [dueTime, setDueTime] = useState("12:00")  // For Time in HH:mm format
   const [category, setCategory] = useState("core")
   const [priority, setPriority] = useState("medium")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Use the dueDate and dueTime as is (no UTC conversion)
+    const formattedDueDate = `${dueDate} ${dueTime}:00`
+
     onAddTask({
       title,
       description,
-      dueDate,
+      dueDate: formattedDueDate,
       category,
       priority,
     })
+
+    const task = {
+      title,
+      description,
+      due_date: formattedDueDate,  // Store in local format (no conversion)
+      category,
+      priority,
+    }
+    
+    const pb = createPocketBase();
+    const record = await pb.collection('task_tracker').create(task);
+    console.log(record)
     resetForm()
     setOpen(false)
   }
@@ -43,7 +59,8 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
   const resetForm = () => {
     setTitle("")
     setDescription("")
-    setDueDate(format(new Date(), "yyyy-MM-dd"))
+    setDueDate(new Date().toISOString().split('T')[0])  // Reset date to current date
+    setDueTime("12:00")  // Reset time to default
     setCategory("core")
     setPriority("medium")
   }
@@ -114,6 +131,18 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="dueTime">Due Time</Label>
+              <Input
+                id="dueTime"
+                type="time"
+                value={dueTime}
+                onChange={(e) => setDueTime(e.target.value)}
+                required
+                className="transition-all duration-300 focus:ring-2 focus:ring-primary/50"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger id="category" className="transition-all duration-300 focus:ring-2 focus:ring-primary/50">
@@ -176,4 +205,3 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
     </Dialog>
   )
 }
-

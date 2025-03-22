@@ -33,9 +33,13 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
     ctfs: "CTF",
     projects: "Project",
   }
-
-  const dueDate = new Date(task.dueDate)
+  console.log(task.dueDate)
+  const dueDate = task.dueDate // Due date in local time
+  console.log(dueDate)
   const isOverdue = !task.completed && dueDate < new Date()
+
+  // Use date-fns to format the date directly without manual conversion
+  const formattedDueDate = format(dueDate, "yyyy-MM-dd HH:mm:ss")
 
   const handleDelete = () => {
     onDelete(task.id)
@@ -110,7 +114,7 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
               <div className="mt-1 flex items-center text-xs sm:text-sm text-muted-foreground">
                 <Calendar className="mr-1 h-3 w-3" />
                 <span className={cn(isOverdue ? "text-destructive font-medium" : "")}>
-                  {format(dueDate, "MMM d, yyyy")}
+                  {formattedDueDate} {/* Display date without manual conversion */}
                   {isOverdue && " (Overdue)"}
                 </span>
               </div>
@@ -155,4 +159,3 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
     </motion.div>
   )
 }
-

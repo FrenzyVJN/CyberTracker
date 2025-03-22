@@ -7,69 +7,45 @@ import { AddTaskDialog } from "@/components/add-task-dialog"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import type { Task } from "@/lib/types"
+import { createPocketBase } from "@/lib/pb"
 
-// Sample initial tasks
-const initialTasks: Task[] = [
-  {
-    id: "1",
-    title: "Complete Math Assignment",
-    description: "Chapter 5 problems 1-20",
-    dueDate: "2025-03-25",
-    category: "core",
-    priority: "high",
-    completed: false,
-  },
-  {
-    id: "2",
-    title: "Physics Lab Report",
-    description: "Write up results from the pendulum experiment",
-    dueDate: "2025-03-28",
-    category: "core",
-    priority: "medium",
-    completed: false,
-  },
-  {
-    id: "3",
-    title: "Web Dev Hackathon",
-    description: "24-hour coding challenge at the student center",
-    dueDate: "2025-04-05",
-    category: "hackathons",
-    priority: "high",
-    completed: false,
-  },
-  {
-    id: "4",
-    title: "PicoCTF Challenge",
-    description: "Complete at least 5 challenges",
-    dueDate: "2025-03-30",
-    category: "ctfs",
-    priority: "medium",
-    completed: false,
-  },
-  {
-    id: "5",
-    title: "Group Project Meeting",
-    description: "Discuss progress on the semester project",
-    dueDate: "2025-03-24",
-    category: "projects",
-    priority: "high",
-    completed: false,
-  },
-]
+// Initialize PocketBase client
 
 export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [open, setOpen] = useState(false)
 
-  // Load tasks from localStorage on initial render
+  // Fetch tasks from PocketBase on initial render
   useEffect(() => {
-    const savedTasks = localStorage.getItem("studentTasks")
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks))
-    } else {
-      setTasks(initialTasks)
-      localStorage.setItem("studentTasks", JSON.stringify(initialTasks))
+    const fetchTasks = async () => {
+      try {
+        const pb = createPocketBase()
+        const records = await pb.collection("task_tracker").getFullList()  // Assuming "tasks" is the name of the collection
+        const fetchedTasks = records.map((record) => ({
+          id: record.id,
+          title: record.title,
+          description: record.description,
+          dueDate: record.due_date,
+          category: record.category,
+          priority: record.priority,
+          completed: false,  // Set completed to false by default
+        }))
+        console.log("Fetched tasks:", fetchedTasks)
+        setTasks(fetchedTasks)
+
+        // Save to localStorage
+        localStorage.setItem("studentTasks", JSON.stringify(fetchedTasks))
+      } catch (error) {
+        console.error("Error fetching tasks from PocketBase:", error)
+        // Optionally, you can use the hardcoded tasks as a fallback
+        const savedTasks = localStorage.getItem("studentTasks")
+        if (savedTasks) {
+          setTasks(JSON.parse(savedTasks))
+        }
+      }
     }
+
+    fetchTasks()
   }, [])
 
   // Save tasks to localStorage whenever they change
@@ -89,11 +65,19 @@ export default function TaskManager() {
   }
 
   const toggleTaskCompletion = (id: string) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    )
+    setTasks(updatedTasks)
+    // Save updated tasks to localStorage
+    localStorage.setItem("studentTasks", JSON.stringify(updatedTasks))
   }
 
   const deleteTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id))
+    const updatedTasks = tasks.filter((task) => task.id !== id)
+    setTasks(updatedTasks)
+    // Save updated tasks to localStorage
+    localStorage.setItem("studentTasks", JSON.stringify(updatedTasks))
   }
 
   return (
@@ -147,4 +131,3 @@ export default function TaskManager() {
     </div>
   )
 }
-
