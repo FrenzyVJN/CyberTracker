@@ -152,7 +152,7 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
                   <SelectItem value="core">Core Subjects</SelectItem>
                   <SelectItem value="hackathons">Hackathons</SelectItem>
                   <SelectItem value="ctfs">CTFs</SelectItem>
-                  <SelectItem value="projects">Projects</SelectItem>
+                  <SelectItem value="projects">NPTEL</SelectItem>
                 </SelectContent>
               </Select>
             </div>
