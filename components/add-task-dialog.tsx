@@ -153,6 +153,7 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
                   <SelectItem value="hackathons">Hackathons</SelectItem>
                   <SelectItem value="ctfs">CTFs</SelectItem>
                   <SelectItem value="projects">NPTEL</SelectItem>
+                  <SelectItem value="exams">Exams</SelectItem>
                 </SelectContent>
               </Select>
             </div>
