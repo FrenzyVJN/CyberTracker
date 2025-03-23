@@ -40,8 +40,8 @@ export function TaskCard({ task, onToggleComplete, onDelete }: TaskCardProps) {
   const isOverdue = !task.completed && dueDate < new Date()
 
   // Use date-fns to format the date directly without manual conversion
-  const formattedDueDate = format(dueDate, "yyyy-MM-dd HH:mm:ss")
 
+  const formattedDueDate = dueDate
   const handleDelete = () => {
     onDelete(task.id)
   }
