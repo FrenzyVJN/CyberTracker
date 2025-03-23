@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion } from "framer-motion"
 import { createPocketBase } from "@/lib/pb"
+import { toast } from "@/components/ui/use-toast" // Assuming you have a toast component
 
 interface AddTaskDialogProps {
   open: boolean
@@ -26,35 +27,111 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
   const [dueTime, setDueTime] = useState("12:00")  // For Time in HH:mm format
   const [category, setCategory] = useState("core")
   const [priority, setPriority] = useState("medium")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const sendEmailNotifications = async (task: any) => {
+    try {
+      const pb = createPocketBase();
+      
+      // Fetch all email subscribers from notification_email collection
+      const subscribers = await pb.collection('notfication_emails').getFullList();
+      
+      if (subscribers.length === 0) {
+        console.log("No email subscribers found");
+        return;
+      }
+
+      // Prepare email data
+      const emailData = {
+        task_id: task.id,
+        task_title: task.title,
+        task_description: task.description,
+        task_due_date: task.due_date,
+        task_category: task.category,
+        task_priority: task.priority,
+        recipients: subscribers.map(sub => sub.emails),
+      };
+
+      // Send to your server endpoint that will handle the actual email sending
+      const response = await fetch('/api/send-task-notification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send email notifications');
+      }
+
+      console.log('Email notifications sent successfully');
+    } catch (error) {
+      console.error('Error sending email notifications:', error);
+      toast({
+        title: "Notification Error",
+        description: "Task created but we couldn't send email notifications",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsSubmitting(true);
 
-    // Use the dueDate and dueTime as is (no UTC conversion)
-    const formattedDueDate = `${dueDate} ${dueTime}:00`
+    try {
+      // Use the dueDate and dueTime as is (no UTC conversion)
+      const formattedDueDate = `${dueDate} ${dueTime}:00`;
 
-    onAddTask({
-      title,
-      description,
-      dueDate: formattedDueDate,
-      category,
-      priority,
-    })
+      // Create task object for local state update
+      const taskForState = {
+        title,
+        description,
+        dueDate: formattedDueDate,
+        category,
+        priority,
+      };
 
-    const task = {
-      title,
-      description,
-      due_date: formattedDueDate,  // Store in local format (no conversion)
-      category,
-      priority,
+      // Update local state
+      onAddTask(taskForState);
+
+      // Create task object for pocketbase
+      const taskForPB = {
+        title,
+        description,
+        due_date: formattedDueDate,  // Store in local format (no conversion)
+        category,
+        priority,
+      };
+      
+      // Save to PocketBase
+      const pb = createPocketBase();
+      const record = await pb.collection('task_tracker').create(taskForPB);
+      console.log("Task created:", record);
+      
+      // Send email notifications
+      await sendEmailNotifications(record);
+      
+      // Show success toast
+      toast({
+        title: "Task Added",
+        description: "Your task has been added successfully and notifications sent",
+      });
+
+      resetForm();
+      setOpen(false);
+    } catch (error) {
+      console.error("Error adding task:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add task. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    const pb = createPocketBase();
-    const record = await pb.collection('task_tracker').create(task);
-    console.log(record)
-    resetForm()
-    setOpen(false)
-  }
+  };
 
   const resetForm = () => {
     setTitle("")
@@ -192,12 +269,17 @@ export function AddTaskDialog({ open, setOpen, onAddTask }: AddTaskDialogProps) 
                 setOpen(false)
               }}
               className="transition-all duration-300"
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button type="submit" className="bg-gradient-to-r from-primary/80 to-primary transition-all duration-300">
-                Add Task
+              <Button 
+                type="submit" 
+                className="bg-gradient-to-r from-primary/80 to-primary transition-all duration-300"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Adding..." : "Add Task"}
               </Button>
             </motion.div>
           </motion.div>

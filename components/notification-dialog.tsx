@@ -18,10 +18,11 @@ export function NotificationDialog({
   onSetupNotifications 
 }: NotificationDialogProps) {
   const [email, setEmail] = useState("")
-  const [frequencyOption, setFrequencyOption] = useState("daily")
   const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async(e: React.FormEvent) => {
+    setIsSubmitting(true)
     e.preventDefault()
     const pb = createPocketBase();
     // Simple email validation
@@ -34,6 +35,7 @@ export function NotificationDialog({
     setOpen(false)
     setEmail("")
     setError("")
+    setIsSubmitting(false)
   }
 
   return (
@@ -62,27 +64,9 @@ export function NotificationDialog({
               />
               {error && <p className="text-sm text-red-500">{error}</p>}
             </div>
-            
-            <div className="grid gap-2">
-              <Label>Notification Frequency</Label>
-              <RadioGroup defaultValue="daily" value={frequencyOption} onValueChange={setFrequencyOption}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="daily" id="daily" />
-                  <Label htmlFor="daily">Daily digest</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="immediate" id="immediate" />
-                  <Label htmlFor="immediate">Immediate (for each task)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="weekly" id="weekly" />
-                  <Label htmlFor="weekly">Weekly summary</Label>
-                </div>
-              </RadioGroup>
-            </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save Preferences</Button>
+            <Button type="submit">{isSubmitting? "Saving..." : "Save Preferences"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
