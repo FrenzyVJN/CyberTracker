@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { z } from "zod" // Assuming you have zod for validation
-
+import { createPocketBase } from "@/lib/pb"
 interface NotificationDialogProps {
   open: boolean
   setOpen: (open: boolean) => void
@@ -21,15 +21,15 @@ export function NotificationDialog({
   const [frequencyOption, setFrequencyOption] = useState("daily")
   const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
-    
+    const pb = createPocketBase();
     // Simple email validation
     if (!email || !email.includes('@') || !email.includes('.')) {
       setError("Please enter a valid email address")
       return
     }
-    
+    const record = await pb.collection("notfication_emails").create({"emails":email,})
     onSetupNotifications(email)
     setOpen(false)
     setEmail("")
